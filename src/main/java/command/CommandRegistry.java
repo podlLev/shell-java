@@ -13,6 +13,7 @@ public class CommandRegistry {
         Map<String, Builtin> map = new HashMap<>();
         map.put("exit", ExitBuiltin.INSTANCE);
         map.put("echo", EchoBuiltin.INSTANCE);
+        map.put("pwd", new PwdBuiltin(env));
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
