@@ -8,8 +8,11 @@ import java.util.*;
 public class CommandRegistry {
 
     private final Map<String, Builtin> builtins;
+    private final Environment env;
 
     public CommandRegistry(Environment env) {
+        this.env = env;
+
         Map<String, Builtin> map = new HashMap<>();
         map.put("exit", ExitBuiltin.INSTANCE);
         map.put("echo", EchoBuiltin.INSTANCE);
@@ -26,11 +29,11 @@ public class CommandRegistry {
         return builtins.containsKey(name);
     }
 
-    public void execute(String command, String argument) {
+    public void execute(String command, List<String> arguments) {
         if (isBuiltin(command)) {
-            builtins.get(command).execute(argument);
+            builtins.get(command).execute(command, arguments);
         } else {
-            System.out.printf("%s: command not found\n", command);
+            new ExternalCommand(env).execute(command, arguments);
         }
     }
 

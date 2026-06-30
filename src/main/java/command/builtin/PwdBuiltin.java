@@ -3,6 +3,8 @@ package command.builtin;
 import lombok.RequiredArgsConstructor;
 import util.Environment;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class PwdBuiltin implements Builtin {
 
@@ -14,7 +16,7 @@ public class PwdBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String args) {
+    public void execute(String command, List<String> args) {
         System.out.println(env.getCurrentDir());
     }
 

@@ -1,6 +1,8 @@
 import command.CommandRegistry;
 import util.Environment;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Shell {
@@ -21,11 +23,11 @@ public class Shell {
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) continue;
 
-            String[] parts = input.split(" ", 2);
+            String[] parts = input.split(" ");
             String command = parts[0];
-            String argument = parts.length > 1 ? parts[1] : "";
+            List<String> arguments = Arrays.stream(parts).skip(1).toList();
 
-            registry.execute(command, argument);
+            registry.execute(command, arguments);
         }
     }
 

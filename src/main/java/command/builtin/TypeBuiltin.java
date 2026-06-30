@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import util.Environment;
 import util.PathResolver;
 
+import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -18,17 +19,18 @@ public final class TypeBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String arg) {
-        if (builtinNames.contains(arg)) {
-            System.out.printf("%s is a shell builtin\n", arg);
+    public void execute(String command, List<String> args) {
+        String argument = args.get(0);
+        if (builtinNames.contains(argument)) {
+            System.out.printf("%s is a shell builtin\n", argument);
             return;
         }
 
-        String path = PathResolver.find(arg, env.getPath());
+        String path = PathResolver.find(argument, env);
         if (path != null) {
-            System.out.printf("%s is %s\n", arg, path);
+            System.out.printf("%s is %s\n", argument, path);
         } else {
-            System.out.printf("%s: not found\n", arg);
+            System.out.printf("%s: not found\n", argument);
         }
     }
 

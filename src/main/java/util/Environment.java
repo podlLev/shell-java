@@ -22,8 +22,16 @@ public class Environment {
         return System.getenv("PATH");
     }
 
+    public String getPathExt() {
+        return System.getenv("PATHEXT");
+    }
+
     public String getHome() {
         return System.getenv("HOME");
+    }
+
+    public boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
     }
 
 }

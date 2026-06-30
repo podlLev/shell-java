@@ -1,8 +1,9 @@
 package command.builtin;
 
-public interface Builtin {
+import command.Executable;
+
+public interface Builtin extends Executable {
 
     String name();
-    void execute(String args);
 
 }

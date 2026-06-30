@@ -1,5 +1,7 @@
 package command.builtin;
 
+import java.util.List;
+
 public final class ExitBuiltin implements Builtin {
 
     public static final ExitBuiltin INSTANCE = new ExitBuiltin();
@@ -12,7 +14,7 @@ public final class ExitBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String args) {
+    public void execute(String command, List<String> args) {
         System.exit(0);
     }
 
