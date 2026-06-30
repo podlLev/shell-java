@@ -1,13 +1,15 @@
 package command;
 
 import command.builtin.Builtin;
+import command.builtin.ExitBuiltin;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class CommandRegistry {
 
-    private final Map<String, Builtin> builtins = new HashMap<>();
+    private final Map<String, Builtin> builtins = Map.of(
+            "exit", ExitBuiltin.INSTANCE
+    );
 
     public boolean isBuiltin(String name) {
         return builtins.containsKey(name);
