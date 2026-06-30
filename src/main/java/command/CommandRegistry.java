@@ -1,29 +1,22 @@
 package command;
 
-import command.builtin.Builtin;
-import command.builtin.EchoBuiltin;
-import command.builtin.ExitBuiltin;
-import command.builtin.TypeBuiltin;
+import command.builtin.*;
+import util.Environment;
 
 import java.util.*;
 
 public class CommandRegistry {
 
-    private static final List<Builtin> BUILTINS = List.of(
-            ExitBuiltin.INSTANCE,
-            EchoBuiltin.INSTANCE
-    );
-
     private final Map<String, Builtin> builtins;
 
-    public CommandRegistry() {
+    public CommandRegistry(Environment env) {
         Map<String, Builtin> map = new HashMap<>();
-        for (Builtin b : BUILTINS) {
-            map.put(b.name(), b);
-        }
+        map.put("exit", ExitBuiltin.INSTANCE);
+        map.put("echo", EchoBuiltin.INSTANCE);
 
-        Set<String> builtinNames = Set.copyOf(map.keySet());
-        map.put("type", new TypeBuiltin(builtinNames));
+        Set<String> builtinNames = new HashSet<>(map.keySet());
+        builtinNames.add("type");
+        map.put("type", new TypeBuiltin(builtinNames, env));
 
         this.builtins = Map.copyOf(map);
     }

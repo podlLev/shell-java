@@ -1,13 +1,16 @@
 import command.CommandRegistry;
+import util.Environment;
 
 import java.util.Scanner;
 
 public class Shell {
 
+    private final Environment env;
     private final CommandRegistry registry;
 
     public Shell() {
-        this.registry = new CommandRegistry();
+        this.env = new Environment();
+        this.registry = new CommandRegistry(env);
     }
 
     public void run() {
