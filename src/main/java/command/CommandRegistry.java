@@ -3,15 +3,30 @@ package command;
 import command.builtin.Builtin;
 import command.builtin.EchoBuiltin;
 import command.builtin.ExitBuiltin;
+import command.builtin.TypeBuiltin;
 
-import java.util.Map;
+import java.util.*;
 
 public class CommandRegistry {
 
-    private final Map<String, Builtin> builtins = Map.of(
-            "exit", ExitBuiltin.INSTANCE
-            , "echo", EchoBuiltin.INSTANCE
+    private static final List<Builtin> BUILTINS = List.of(
+            ExitBuiltin.INSTANCE,
+            EchoBuiltin.INSTANCE
     );
+
+    private final Map<String, Builtin> builtins;
+
+    public CommandRegistry() {
+        Map<String, Builtin> map = new HashMap<>();
+        for (Builtin b : BUILTINS) {
+            map.put(b.name(), b);
+        }
+
+        Set<String> builtinNames = Set.copyOf(map.keySet());
+        map.put("type", new TypeBuiltin(builtinNames));
+
+        this.builtins = Map.copyOf(map);
+    }
 
     public boolean isBuiltin(String name) {
         return builtins.containsKey(name);

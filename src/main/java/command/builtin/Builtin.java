@@ -2,6 +2,7 @@ package command.builtin;
 
 public interface Builtin {
 
-    void execute(String arg);
+    String name();
+    void execute(String args);
 
 }

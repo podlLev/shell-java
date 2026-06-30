@@ -1,8 +1,15 @@
 package command.builtin;
 
-public enum EchoBuiltin implements Builtin {
+public final class EchoBuiltin implements Builtin {
 
-    INSTANCE;
+    public static final EchoBuiltin INSTANCE = new EchoBuiltin();
+
+    private EchoBuiltin() {}
+
+    @Override
+    public String name() {
+        return "echo";
+    }
 
     @Override
     public void execute(String arg) {

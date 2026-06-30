@@ -1,8 +1,15 @@
 package command.builtin;
 
-public enum ExitBuiltin implements Builtin {
+public final class ExitBuiltin implements Builtin {
 
-    INSTANCE;
+    public static final ExitBuiltin INSTANCE = new ExitBuiltin();
+
+    private ExitBuiltin() {}
+
+    @Override
+    public String name() {
+        return "exit";
+    }
 
     @Override
     public void execute(String args) {
