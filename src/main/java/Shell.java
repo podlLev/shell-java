@@ -3,11 +3,14 @@ import java.util.Scanner;
 public class Shell {
 
     public static void main(String[] args) {
-        System.out.print("$ ");
+        Scanner sc = new Scanner(System.in);
 
-        Scanner scanner = new Scanner(System.in);
-        String command = scanner.nextLine();
-        System.out.println(command + ": command not found");
+        while (true) {
+            System.out.print("$ ");
+            String input = sc.nextLine();
+
+            System.out.printf("%s: command not found", input);
+        }
     }
 
 }
