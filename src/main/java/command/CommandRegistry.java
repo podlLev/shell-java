@@ -14,19 +14,24 @@ public class CommandRegistry {
         this.env = env;
 
         Map<String, Builtin> map = new HashMap<>();
-        map.put("exit", ExitBuiltin.INSTANCE);
-        map.put("echo", EchoBuiltin.INSTANCE);
-        map.put("pwd", new PwdBuiltin(env));
-        map.put("cd", new CdBuiltin(env));
-        map.put("ls", new LsBuiltin(env));
-        map.put("mkdir", MkdirBuiltin.INSTANCE);
-        map.put("rmdir", RmdirBuiltin.INSTANCE);
+        register(map, ExitBuiltin.INSTANCE);
+        register(map, EchoBuiltin.INSTANCE);
+        register(map, new PwdBuiltin(env));
+        register(map, new CdBuiltin(env));
+        register(map, new LsBuiltin(env));
+        register(map, MkdirBuiltin.INSTANCE);
+        register(map, RmdirBuiltin.INSTANCE);
+        register(map, TouchBuiltin.INSTANCE);
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
-        map.put("type", new TypeBuiltin(builtinNames, env));
+        register(map, new TypeBuiltin(builtinNames, env));
 
         this.builtins = Map.copyOf(map);
+    }
+
+    private static void register(Map<String, Builtin> map, Builtin builtin) {
+        map.put(builtin.name(), builtin);
     }
 
     public boolean isBuiltin(String name) {
