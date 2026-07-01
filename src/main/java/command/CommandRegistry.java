@@ -14,15 +14,9 @@ public class CommandRegistry {
         this.env = env;
 
         Map<String, Builtin> map = new HashMap<>();
-        register(map, ExitBuiltin.INSTANCE);
-        register(map, EchoBuiltin.INSTANCE);
-        register(map, new PwdBuiltin(env));
-        register(map, new CdBuiltin(env));
-        register(map, new LsBuiltin(env));
-        register(map, MkdirBuiltin.INSTANCE);
-        register(map, RmdirBuiltin.INSTANCE);
-        register(map, TouchBuiltin.INSTANCE);
-        register(map, CatBuiltin.INSTANCE);
+        for (BuiltinFactory f : BuiltinFactory.values()) {
+            register(map, f.create(env));
+        }
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
