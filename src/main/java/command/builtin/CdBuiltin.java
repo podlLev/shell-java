@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CdBuiltin implements Builtin {
+public final class CdBuiltin implements Builtin {
 
     private final Environment env;
 

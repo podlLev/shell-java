@@ -6,7 +6,7 @@ import util.Environment;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PwdBuiltin implements Builtin {
+public final class PwdBuiltin implements Builtin {
 
     private final Environment env;
 

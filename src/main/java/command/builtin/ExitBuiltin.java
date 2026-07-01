@@ -1,12 +1,14 @@
 package command.builtin;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ExitBuiltin implements Builtin {
 
     public static final ExitBuiltin INSTANCE = new ExitBuiltin();
-
-    private ExitBuiltin() {}
 
     @Override
     public String name() {
