@@ -18,6 +18,7 @@ public class CommandRegistry {
         map.put("echo", EchoBuiltin.INSTANCE);
         map.put("pwd", new PwdBuiltin(env));
         map.put("cd", new CdBuiltin(env));
+        map.put("ls", new LsBuiltin(env));
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
