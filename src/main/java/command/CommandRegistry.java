@@ -20,6 +20,7 @@ public class CommandRegistry {
         map.put("cd", new CdBuiltin(env));
         map.put("ls", new LsBuiltin(env));
         map.put("mkdir", MkdirBuiltin.INSTANCE);
+        map.put("rmdir", RmdirBuiltin.INSTANCE);
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
