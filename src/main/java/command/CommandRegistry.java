@@ -22,6 +22,7 @@ public class CommandRegistry {
         register(map, MkdirBuiltin.INSTANCE);
         register(map, RmdirBuiltin.INSTANCE);
         register(map, TouchBuiltin.INSTANCE);
+        register(map, CatBuiltin.INSTANCE);
 
         Set<String> builtinNames = new HashSet<>(map.keySet());
         builtinNames.add("type");
