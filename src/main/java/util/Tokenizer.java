@@ -10,6 +10,8 @@ public class Tokenizer {
     private static final char DOUBLE = '\"';
     private static final char TAB = '\t';
     private static final char BACKSLASH = '\\';
+    private static final char DOLLAR = '$';
+    private static final char BACKTICK = '`';
 
     public List<String> tokenize(String input) {
         List<String> tokens = new ArrayList<>();
@@ -59,24 +61,26 @@ public class Tokenizer {
             }
             current.append(c);
         }
-        return i;
+        throw new UnterminatedQuoteException(SINGLE);
     }
 
     private int parseDoubleQuote(String input, int i, StringBuilder current) {
         while (i < input.length()) {
             char c = input.charAt(i++);
-            if (c == DOUBLE) {
-                return i;
-            } else if (c == BACKSLASH && i < input.length()) {
+            if (c == DOUBLE) return i;
+            if (c == BACKSLASH && i < input.length()) {
                 char next = input.charAt(i++);
-                if (next == BACKSLASH || next == DOUBLE) {
+                if (next == BACKSLASH || next == DOUBLE || next == DOLLAR || next == BACKTICK) {
                     current.append(next);
                     continue;
                 }
+                current.append(BACKSLASH);
+                current.append(next);
+            } else {
+                current.append(c);
             }
-            current.append(c);
         }
-        return i;
+        throw new UnterminatedQuoteException(DOUBLE);
     }
 
     private int parseBackslash(String input, int i, StringBuilder current) {

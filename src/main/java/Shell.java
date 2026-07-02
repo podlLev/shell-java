@@ -1,6 +1,7 @@
 import command.CommandRegistry;
 import util.Environment;
 import util.Tokenizer;
+import util.UnterminatedQuoteException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -24,13 +25,16 @@ public class Shell {
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) continue;
 
-            List<String> tokens = tokenizer.tokenize(input);
-            if (tokens.isEmpty()) continue;
+            try {
+                List<String> tokens = tokenizer.tokenize(input);
+                if (tokens.isEmpty()) continue;
 
-            String command = tokens.get(0);
-            List<String> argTokens = tokens.subList(1, tokens.size());
-
-            registry.execute(command, argTokens);
+                String command = tokens.get(0);
+                List<String> args = tokens.subList(1, tokens.size());
+                registry.execute(command, args);
+            } catch (UnterminatedQuoteException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
