@@ -9,6 +9,7 @@ public class Tokenizer {
     private static final char SINGLE = '\'';
     private static final char DOUBLE = '\"';
     private static final char TAB = '\t';
+    private static final char BACKSLASH = '\\';
 
     public List<String> tokenize(String input) {
         List<String> tokens = new ArrayList<>();
@@ -21,6 +22,7 @@ public class Tokenizer {
             switch (c) {
                 case SINGLE -> i = parseSingleQuote(input, i + 1, current);
                 case DOUBLE -> i = parseDoubleQuote(input, i + 1, current);
+                case BACKSLASH -> i = parseBackslash(input, i + 1, current);
                 case WHITESPACE, TAB -> {
                     if (!current.isEmpty()) {
                         tokens.add(current.toString());
@@ -60,6 +62,14 @@ public class Tokenizer {
                 return i;
             }
             current.append(c);
+        }
+        return i;
+    }
+
+    private int parseBackslash(String input, int i, StringBuilder current) {
+        if (i < input.length()) {
+            current.append(input.charAt(i));
+            return i + 1;
         }
         return i;
     }
