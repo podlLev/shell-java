@@ -60,6 +60,12 @@ public class Tokenizer {
             char c = input.charAt(i++);
             if (c == DOUBLE) {
                 return i;
+            } else if (c == BACKSLASH && i < input.length()) {
+                char next = input.charAt(i++);
+                if (next == BACKSLASH || next == DOUBLE) {
+                    current.append(next);
+                    continue;
+                }
             }
             current.append(c);
         }
