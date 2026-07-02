@@ -14,19 +14,27 @@ public class Tokenizer {
     public List<String> tokenize(String input) {
         List<String> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
+        boolean quoted = false;
         int i = 0;
 
         while (i < input.length()) {
             char c = input.charAt(i);
 
             switch (c) {
-                case SINGLE -> i = parseSingleQuote(input, i + 1, current);
-                case DOUBLE -> i = parseDoubleQuote(input, i + 1, current);
+                case SINGLE -> {
+                    quoted = true;
+                    i = parseSingleQuote(input, i + 1, current);
+                }
+                case DOUBLE -> {
+                    quoted = true;
+                    i = parseDoubleQuote(input, i + 1, current);
+                }
                 case BACKSLASH -> i = parseBackslash(input, i + 1, current);
                 case WHITESPACE, TAB -> {
-                    if (!current.isEmpty()) {
+                    if (!current.isEmpty() || quoted) {
                         tokens.add(current.toString());
                         current.setLength(0);
+                        quoted = false;
                     }
                     ++i;
                 }
@@ -35,10 +43,9 @@ public class Tokenizer {
                     ++i;
                 }
             }
-
         }
 
-        if (!current.isEmpty()) {
+        if (!current.isEmpty() || quoted) {
             tokens.add(current.toString());
         }
         return tokens;
