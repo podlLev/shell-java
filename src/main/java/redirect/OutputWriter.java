@@ -13,6 +13,7 @@ public class OutputWriter {
         }
         switch (redirect.type()) {
             case STDOUT -> writeToFile(text, redirect.filePath(), false);
+            case STDOUT_APPEND -> writeToFile(text, redirect.filePath(), true);
             default -> {
                 System.out.println(text);
                 createEmptyFile(redirect.filePath());
@@ -27,6 +28,7 @@ public class OutputWriter {
         }
         switch (redirect.type()) {
             case STDERR -> writeToFile(text, redirect.filePath(), false);
+            case STDERR_APPEND -> writeToFile(text, redirect.filePath(), true);
             default -> {
                 System.err.println(text);
                 createEmptyFile(redirect.filePath());

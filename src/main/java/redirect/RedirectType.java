@@ -2,5 +2,7 @@ package redirect;
 
 public enum RedirectType {
     STDOUT,
-    STDERR
+    STDERR,
+    STDOUT_APPEND,
+    STDERR_APPEND
 }

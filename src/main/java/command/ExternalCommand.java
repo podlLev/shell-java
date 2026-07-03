@@ -1,7 +1,6 @@
 package command;
 
 import lombok.RequiredArgsConstructor;
-import redirect.OutputWriter;
 import redirect.Redirect;
 import util.Environment;
 import util.PathResolver;
@@ -31,9 +30,9 @@ public class ExternalCommand implements Executable {
             pb.start().waitFor();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            OutputWriter.writeError(String.format("%s: interrupted", command), redirect);
+            System.err.printf("%s: interrupted%n", command);
         } catch (Exception e) {
-            OutputWriter.writeError(String.format("%s: %s", command, e.getMessage()), redirect);
+            System.err.printf("%s: %s%n", command, e.getMessage());
         }
     }
 
@@ -43,8 +42,23 @@ public class ExternalCommand implements Executable {
             return;
         }
         switch (redirect.type()) {
-            case STDOUT -> pb.redirectOutput(new File(redirect.filePath()));
-            case STDERR -> pb.redirectError(new File(redirect.filePath()));
+            case STDOUT -> {
+                pb.redirectOutput(new File(redirect.filePath()));
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDOUT_APPEND -> {
+                pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDERR -> {
+                pb.redirectError(new File(redirect.filePath()));
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDERR_APPEND -> {
+                pb.redirectError(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            }
+            default -> pb.inheritIO();
         }
         pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
     }
