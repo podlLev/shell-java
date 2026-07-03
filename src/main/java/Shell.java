@@ -23,20 +23,21 @@ public class Shell {
 
         while (true) {
             System.out.print("$ ");
+            System.out.flush();
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) continue;
 
             try {
                 ParseResult result = tokenizer.tokenize(input);
-                List<String> tokens = result.getTokens();
+                List<String> tokens = result.tokens();
                 if (tokens.isEmpty()) continue;
 
                 String command = tokens.get(0);
                 List<String> argTokens = tokens.subList(1, tokens.size());
 
-                registry.execute(command, argTokens, result.getRedirect().orElse(null));
+                registry.execute(command, argTokens, result.redirect());
             } catch (UnterminatedQuoteException e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
     }
