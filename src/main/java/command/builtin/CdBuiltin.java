@@ -1,6 +1,7 @@
 package command.builtin;
 
 import lombok.RequiredArgsConstructor;
+import redirect.Redirect;
 import util.Environment;
 
 import java.io.File;
@@ -17,7 +18,7 @@ public final class CdBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         String path = args.get(0);
         File target = resolve(path);
 

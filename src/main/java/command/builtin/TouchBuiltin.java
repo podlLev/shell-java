@@ -2,6 +2,7 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.Redirect;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public final class TouchBuiltin implements Builtin {
     public String name() { return "touch"; }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
             System.out.println("touch: missing operand");
             return;

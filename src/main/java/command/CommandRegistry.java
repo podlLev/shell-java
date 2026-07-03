@@ -1,6 +1,7 @@
 package command;
 
 import command.builtin.*;
+import redirect.Redirect;
 import util.Environment;
 
 import java.util.*;
@@ -8,10 +9,9 @@ import java.util.*;
 public class CommandRegistry {
 
     private final Map<String, Builtin> builtins;
-    private final Environment env;
+    private final ExternalCommand externalCommand;
 
     public CommandRegistry(Environment env) {
-        this.env = env;
 
         Map<String, Builtin> map = new HashMap<>();
         for (BuiltinFactory f : BuiltinFactory.values()) {
@@ -23,6 +23,7 @@ public class CommandRegistry {
         register(map, new TypeBuiltin(builtinNames, env));
 
         this.builtins = Map.copyOf(map);
+        this.externalCommand = new ExternalCommand(env);
     }
 
     private static void register(Map<String, Builtin> map, Builtin builtin) {
@@ -33,11 +34,11 @@ public class CommandRegistry {
         return builtins.containsKey(name);
     }
 
-    public void execute(String command, List<String> arguments) {
+    public void execute(String command, List<String> arguments, Redirect redirect) {
         if (isBuiltin(command)) {
-            builtins.get(command).execute(command, arguments);
+            builtins.get(command).execute(command, arguments, redirect);
         } else {
-            new ExternalCommand(env).execute(command, arguments);
+            externalCommand.execute(command, arguments, redirect);
         }
     }
 

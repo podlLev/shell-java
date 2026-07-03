@@ -2,6 +2,7 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.Redirect;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public final class ExitBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         System.exit(0);
     }
 

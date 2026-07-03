@@ -2,6 +2,8 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +20,7 @@ public final class CatBuiltin implements Builtin {
     public String name() { return "cat"; }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
             System.out.println("cat: missing operand");
             return;
@@ -26,7 +28,7 @@ public final class CatBuiltin implements Builtin {
 
         for (String path : args) {
             try (Stream<String> lines = Files.lines(Paths.get(path))) {
-                lines.forEach(System.out::println);
+                lines.forEach(line -> OutputWriter.write(line, redirect));
             } catch (IOException e) {
                 System.out.printf("cat: %s: %s%n", path, e.getMessage());
             }

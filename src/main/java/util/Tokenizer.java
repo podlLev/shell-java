@@ -1,5 +1,8 @@
 package util;
 
+import redirect.Redirect;
+import redirect.RedirectType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +16,7 @@ public class Tokenizer {
     private static final char DOLLAR = '$';
     private static final char BACKTICK = '`';
 
-    public List<String> tokenize(String input) {
+    public ParseResult tokenize(String input) {
         List<String> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean quoted = false;
@@ -50,7 +53,7 @@ public class Tokenizer {
         if (!current.isEmpty() || quoted) {
             tokens.add(current.toString());
         }
-        return tokens;
+        return extractRedirect(tokens);
     }
 
     private int parseSingleQuote(String input, int i, StringBuilder current) {
@@ -89,6 +92,29 @@ public class Tokenizer {
             return i + 1;
         }
         return i;
+    }
+
+    private ParseResult extractRedirect(List<String> tokens) {
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+            RedirectType type = switch (token) {
+                case ">", "1>" -> RedirectType.STDOUT;
+                case "2>" -> RedirectType.STDERR;
+                default -> null;
+            };
+
+            if (type != null) {
+                int fileIndex = i + 1;
+                if (fileIndex >= tokens.size()) {
+                    System.out.println("syntax error: expected filename after redirect");
+                    return new ParseResult(tokens, null);
+                }
+                List<String> args = new ArrayList<>(tokens.subList(0, i));
+                args.addAll(tokens.subList(fileIndex + 1, tokens.size()));
+                return new ParseResult(args, new Redirect(type, tokens.get(fileIndex)));
+            }
+        }
+        return new ParseResult(tokens, null);
     }
 
 }

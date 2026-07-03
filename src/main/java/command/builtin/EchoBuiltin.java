@@ -2,6 +2,8 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 
 import java.util.List;
 
@@ -16,8 +18,8 @@ public final class EchoBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String command, List<String> args) {
-        System.out.println(String.join(" ", args));
+    public void execute(String command, List<String> args, Redirect redirect) {
+        OutputWriter.write(String.join(" ", args), redirect);
     }
 
 }
