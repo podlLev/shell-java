@@ -6,7 +6,7 @@
 
     <groupId>com.github.podllev</groupId>
     <artifactId>shell-java</artifactId>
-    <version>0.1.0</version>
+    <version>0.3.0</version>
     <name>shell-java</name>
     <description>A custom shell implementation in Java with builtins and external command execution</description>
 
