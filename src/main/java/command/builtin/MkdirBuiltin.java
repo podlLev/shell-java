@@ -2,6 +2,7 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.OutputWriter;
 import redirect.Redirect;
 
 import java.io.File;
@@ -18,16 +19,16 @@ public final class MkdirBuiltin implements Builtin {
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
-            System.out.println("mkdir: missing operand");
+            System.err.println("mkdir: missing operand");
             return;
         }
 
         for (String path : args) {
             File dir = new File(path);
             if (dir.exists()) {
-                System.out.printf("mkdir: %s: File exists%n", path);
+                OutputWriter.writeError(String.format("mkdir: %s: File exists", path), redirect);
             } else if (!dir.mkdirs()) {
-                System.out.printf("mkdir: %s: Cannot create directory%n", path);
+                OutputWriter.writeError(String.format("mkdir: %s: Cannot create directory", path), redirect);
             }
         }
     }

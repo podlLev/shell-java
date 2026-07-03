@@ -22,7 +22,7 @@ public final class CatBuiltin implements Builtin {
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
-            System.out.println("cat: missing operand");
+            System.err.println("cat: missing operand");
             return;
         }
 
@@ -30,7 +30,7 @@ public final class CatBuiltin implements Builtin {
             try (Stream<String> lines = Files.lines(Paths.get(path))) {
                 lines.forEach(line -> OutputWriter.write(line, redirect));
             } catch (IOException e) {
-                System.out.printf("cat: %s: %s%n", path, e.getMessage());
+                OutputWriter.writeError(String.format("cat: %s: %s", path, e.getMessage()), redirect);
             }
         }
     }

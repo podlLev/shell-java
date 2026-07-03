@@ -32,7 +32,7 @@ public final class TypeBuiltin implements Builtin {
         if (path != null) {
             OutputWriter.write(argument + " is " + path, redirect);
         } else {
-            OutputWriter.write(argument + ": not found", redirect);
+            OutputWriter.writeError(argument + ": not found", redirect);
         }
     }
 

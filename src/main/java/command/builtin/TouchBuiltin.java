@@ -2,6 +2,7 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.OutputWriter;
 import redirect.Redirect;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public final class TouchBuiltin implements Builtin {
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
-            System.out.println("touch: missing operand");
+            System.err.println("touch: missing operand");
             return;
         }
 
@@ -28,7 +29,7 @@ public final class TouchBuiltin implements Builtin {
             try {
                 if (file.exists()) {
                     if (!file.setLastModified(System.currentTimeMillis())) {
-                        System.out.printf("touch: %s: Cannot update timestamp%n", path);
+                        OutputWriter.writeError("touch: Cannot update timestamp", redirect);
                     }
                 } else {
                     File parent = file.getParentFile();
@@ -36,11 +37,11 @@ public final class TouchBuiltin implements Builtin {
                         parent.mkdirs();
                     }
                     if (!file.createNewFile()) {
-                        System.out.printf("touch: %s: Cannot create file%n", path);
+                        OutputWriter.writeError("touch: Cannot create file", redirect);
                     }
                 }
             } catch (IOException e) {
-                System.out.printf("touch: %s: %s%n", path, e.getMessage());
+                OutputWriter.writeError(String.format("touch: %s: %s", path, e.getMessage()), redirect);
             }
         }
     }

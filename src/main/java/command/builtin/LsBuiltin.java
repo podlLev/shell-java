@@ -24,7 +24,7 @@ public final class LsBuiltin implements Builtin {
                 : new File(args.get(0));
 
         if (!dir.exists() || !dir.isDirectory()) {
-            System.out.printf("ls: %s: No such directory%n", dir.getPath());
+            OutputWriter.writeError(String.format("ls: %s: No such directory", dir.getPath()), redirect);
             return;
         }
 
