@@ -1,9 +1,11 @@
 package command;
 
 import lombok.RequiredArgsConstructor;
+import redirect.Redirect;
 import util.Environment;
 import util.PathResolver;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,32 +15,56 @@ public class ExternalCommand implements Executable {
     private final Environment env;
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         String execPath = PathResolver.find(command, env);
         if (execPath == null) {
-            System.out.printf("%s: command not found%n", command);
+            System.err.printf("%s: command not found%n", command);
             return;
         }
 
         try {
             List<String> parts = buildProcessArgs(command, execPath, args);
-
             ProcessBuilder pb = new ProcessBuilder(parts);
-            pb.inheritIO();
             pb.directory(env.getCurrentDir());
-
+            configureRedirect(pb, redirect);
             pb.start().waitFor();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.out.printf("%s: interrupted%n", command);
+            System.err.printf("%s: interrupted%n", command);
         } catch (Exception e) {
-            System.out.printf("%s: %s%n", command, e.getMessage());
+            System.err.printf("%s: %s%n", command, e.getMessage());
         }
+    }
+
+    private void configureRedirect(ProcessBuilder pb, Redirect redirect) {
+        if (redirect == null) {
+            pb.inheritIO();
+            return;
+        }
+        switch (redirect.type()) {
+            case STDOUT -> {
+                pb.redirectOutput(new File(redirect.filePath()));
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDOUT_APPEND -> {
+                pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDERR -> {
+                pb.redirectError(new File(redirect.filePath()));
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            }
+            case STDERR_APPEND -> {
+                pb.redirectError(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            }
+            default -> pb.inheritIO();
+        }
+        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
     }
 
     private List<String> buildProcessArgs(String command, String execPath, List<String> args) {
         List<String> parts = new ArrayList<>();
-
         if (env.isWindows()) {
             parts.add("cmd.exe");
             parts.add("/c");
@@ -46,7 +72,6 @@ public class ExternalCommand implements Executable {
         } else {
             parts.add(execPath);
         }
-
         parts.addAll(args);
         return parts;
     }

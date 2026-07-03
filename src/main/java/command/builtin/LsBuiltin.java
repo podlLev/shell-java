@@ -1,6 +1,8 @@
 package command.builtin;
 
 import lombok.RequiredArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 import util.Environment;
 
 import java.io.File;
@@ -16,13 +18,13 @@ public final class LsBuiltin implements Builtin {
     public String name() { return "ls"; }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         File dir = args.isEmpty()
                 ? env.getCurrentDir()
                 : new File(args.get(0));
 
         if (!dir.exists() || !dir.isDirectory()) {
-            System.out.printf("ls: %s: No such directory%n", dir.getPath());
+            OutputWriter.writeError(String.format("ls: %s: No such directory", dir.getPath()), redirect);
             return;
         }
 
@@ -31,7 +33,7 @@ public final class LsBuiltin implements Builtin {
 
         Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
         for (File file : files) {
-            System.out.println(file.getName());
+            OutputWriter.write(file.getName(), redirect);
         }
     }
 

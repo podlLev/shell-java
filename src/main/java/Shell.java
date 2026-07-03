@@ -1,5 +1,6 @@
 import command.CommandRegistry;
 import util.Environment;
+import util.ParseResult;
 import util.Tokenizer;
 import util.UnterminatedQuoteException;
 
@@ -22,18 +23,21 @@ public class Shell {
 
         while (true) {
             System.out.print("$ ");
+            System.out.flush();
             String input = scanner.nextLine().trim();
             if (input.isEmpty()) continue;
 
             try {
-                List<String> tokens = tokenizer.tokenize(input);
+                ParseResult result = tokenizer.tokenize(input);
+                List<String> tokens = result.tokens();
                 if (tokens.isEmpty()) continue;
 
                 String command = tokens.get(0);
-                List<String> args = tokens.subList(1, tokens.size());
-                registry.execute(command, args);
+                List<String> argTokens = tokens.subList(1, tokens.size());
+
+                registry.execute(command, argTokens, result.redirect());
             } catch (UnterminatedQuoteException e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
     }

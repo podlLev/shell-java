@@ -1,6 +1,8 @@
 package command.builtin;
 
 import lombok.RequiredArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 import util.Environment;
 
 import java.util.List;
@@ -16,8 +18,8 @@ public final class PwdBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String command, List<String> args) {
-        System.out.println(env.getCurrentDir());
+    public void execute(String command, List<String> args, Redirect redirect) {
+        OutputWriter.write(env.getCurrentDir().toString(), redirect);
     }
 
 }

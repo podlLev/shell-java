@@ -2,6 +2,8 @@ package command.builtin;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 
 import java.io.File;
 import java.util.List;
@@ -16,22 +18,22 @@ public final class RmdirBuiltin implements Builtin {
     public String name() { return "rmdir"; }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
-            System.out.println("rmdir: missing operand");
+            System.err.println("rmdir: missing operand");
             return;
         }
 
         for (String path : args) {
             File dir = new File(path);
             if (!dir.exists()) {
-                System.out.printf("rmdir: %s: No such file or directory%n", path);
+                OutputWriter.writeError(String.format("rmdir: %s: No such file or directory", path), redirect);
             } else if (!dir.isDirectory()) {
-                System.out.printf("rmdir: %s: Not a directory%n", path);
+                OutputWriter.writeError(String.format("rmdir: %s: Not a directory", path), redirect);
             } else if (dir.list() != null && Objects.requireNonNull(dir.list()).length > 0) {
-                System.out.printf("rmdir: %s: Directory not empty%n", path);
+                OutputWriter.writeError(String.format("rmdir: %s: Directory not empty", path), redirect);
             } else if (!dir.delete()) {
-                System.out.printf("rmdir: %s: Cannot remove directory%n", path);
+                OutputWriter.writeError(String.format("rmdir: %s: Cannot remove directory", path), redirect);
             }
         }
     }

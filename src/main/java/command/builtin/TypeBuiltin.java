@@ -1,6 +1,8 @@
 package command.builtin;
 
 import lombok.RequiredArgsConstructor;
+import redirect.OutputWriter;
+import redirect.Redirect;
 import util.Environment;
 import util.PathResolver;
 
@@ -19,18 +21,18 @@ public final class TypeBuiltin implements Builtin {
     }
 
     @Override
-    public void execute(String command, List<String> args) {
+    public void execute(String command, List<String> args, Redirect redirect) {
         String argument = args.get(0);
         if (builtinNames.contains(argument)) {
-            System.out.printf("%s is a shell builtin\n", argument);
+            OutputWriter.write(argument + " is a shell builtin", redirect);
             return;
         }
 
         String path = PathResolver.find(argument, env);
         if (path != null) {
-            System.out.printf("%s is %s\n", argument, path);
+            OutputWriter.write(argument + " is " + path, redirect);
         } else {
-            System.out.printf("%s: not found\n", argument);
+            OutputWriter.writeError(argument + ": not found", redirect);
         }
     }
 
