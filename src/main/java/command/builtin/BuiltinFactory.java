@@ -14,7 +14,8 @@ public enum BuiltinFactory {
 
     PWD(PwdBuiltin::new),
     CD(CdBuiltin::new),
-    LS(LsBuiltin::new);
+    LS(LsBuiltin::new),
+    COMPLETE(CompleteBuiltin::new);
 
     private final Function<Environment, Builtin> factory;
 

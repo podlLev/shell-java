@@ -3,11 +3,16 @@ package util;
 import lombok.Getter;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Getter
 public class Environment {
 
     private File currentDir;
+
+    private final Map<String, String> completions = new HashMap<>();
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));
@@ -32,6 +37,18 @@ public class Environment {
 
     public boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
+    public void registerCompletion(String command, String scriptPath) {
+        completions.put(command, scriptPath);
+    }
+
+    public Optional<String> getCompletion(String command) {
+        return Optional.ofNullable(completions.get(command));
+    }
+
+    public void removeCompletion(String command) {
+        completions.remove(command);
     }
 
 }
