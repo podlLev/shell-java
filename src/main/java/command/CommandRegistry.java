@@ -42,4 +42,8 @@ public class CommandRegistry {
         }
     }
 
+    public Set<String> getBuiltinNames() {
+        return builtins.keySet();
+    }
+
 }
