@@ -1,10 +1,7 @@
 import command.CommandRegistry;
-import completer.SystemBinaryCompleter;
-import org.jline.builtins.Completers;
+import completer.CandidateCollector;
 import org.jline.reader.*;
 import org.jline.reader.impl.DefaultParser;
-import org.jline.reader.impl.completer.AggregateCompleter;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import util.*;
@@ -29,15 +26,11 @@ public class Shell {
                 .system(true)
                 .build()) {
 
-            Completer completer = new AggregateCompleter(
-                    new StringsCompleter(registry.getBuiltinNames()),
-                    new Completers.FilesCompleter(env.getCurrentDir()),
-                    new Completers.DirectoriesCompleter(env.getCurrentDir()),
-                    new SystemBinaryCompleter(env)
-            );
-
             DefaultParser parser = new DefaultParser();
             parser.setEscapeChars(null);
+
+            Completer completer = (reader, line, candidates) ->
+                    candidates.addAll(CandidateCollector.of(registry, env).collect(reader, line));
 
             LineReader reader = LineReaderBuilder.builder()
                     .terminal(terminal)
@@ -45,6 +38,7 @@ public class Shell {
                     .parser(parser)
                     .option(LineReader.Option.AUTO_MENU, true)
                     .option(LineReader.Option.AUTO_LIST, true)
+                    .option(LineReader.Option.MENU_COMPLETE, true)
                     .build();
 
             while (true) {
@@ -63,7 +57,7 @@ public class Shell {
                 } catch (UnterminatedQuoteException e) {
                     System.err.println(e.getMessage());
                 } catch (UserInterruptException e) {
-                    // Ctrl+C — JLine clears the current line, loop continues to next prompt
+                    // Ctrl+C — JLine clears current line, loop continues
                 } catch (EndOfFileException e) {
                     // Ctrl+D — exit shell
                     return;
