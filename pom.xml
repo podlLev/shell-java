@@ -6,9 +6,9 @@
 
     <groupId>com.github.podllev</groupId>
     <artifactId>shell-java</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <name>shell-java</name>
-    <description>A custom shell implementation in Java with builtins and external command execution</description>
+    <description>A custom shell implementation in Java with builtins, I/O redirection, tab completion, and external command execution</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
