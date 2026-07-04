@@ -1,4 +1,5 @@
 import command.CommandRegistry;
+import completer.SystemBinaryCompleter;
 import org.jline.builtins.Completers;
 import org.jline.reader.*;
 import org.jline.reader.impl.DefaultParser;
@@ -31,7 +32,8 @@ public class Shell {
             Completer completer = new AggregateCompleter(
                     new StringsCompleter(registry.getBuiltinNames()),
                     new Completers.FilesCompleter(env.getCurrentDir()),
-                    new Completers.DirectoriesCompleter(env.getCurrentDir())
+                    new Completers.DirectoriesCompleter(env.getCurrentDir()),
+                    new SystemBinaryCompleter(env)
             );
 
             DefaultParser parser = new DefaultParser();
