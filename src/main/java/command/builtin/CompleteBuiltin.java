@@ -21,13 +21,16 @@ public final class CompleteBuiltin implements Builtin {
     public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) return;
 
-        if (args.get(0).equals("-p") && args.size() >= 2) {
-            handlePrint(args.get(1), redirect);
-            return;
-        }
-
-        if (args.get(0).equals("-C") && args.size() >= 3) {
-            handleRegister(args.get(1), args.get(2));
+        switch (args.get(0)) {
+            case "-p" -> {
+                if (args.size() >= 2) handlePrint(args.get(1), redirect);
+            }
+            case "-C" -> {
+                if (args.size() >= 3) handleRegister(args.get(1), args.get(2));
+            }
+            case "-r" -> {
+                if (args.size() >= 2) env.removeCompletion(args.get(1));
+            }
         }
     }
 

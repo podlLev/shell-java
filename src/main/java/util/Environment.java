@@ -47,4 +47,8 @@ public class Environment {
         return Optional.ofNullable(completions.get(command));
     }
 
+    public void removeCompletion(String command) {
+        completions.remove(command);
+    }
+
 }
