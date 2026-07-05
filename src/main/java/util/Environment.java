@@ -1,5 +1,6 @@
 package util;
 
+import jobs.JobManager;
 import lombok.Getter;
 
 import java.io.File;
@@ -13,6 +14,7 @@ public class Environment {
     private File currentDir;
 
     private final Map<String, String> completions = new HashMap<>();
+    private final JobManager jobManager = new JobManager();
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));
