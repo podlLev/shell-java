@@ -50,10 +50,17 @@ public class Shell {
                     List<String> tokens = result.tokens();
                     if (tokens.isEmpty()) continue;
 
+                    boolean background = false;
+                    if (tokens.get(tokens.size() - 1).equals("&")) {
+                        background = true;
+                        tokens = tokens.subList(0, tokens.size() - 1);
+                    }
+                    if (tokens.isEmpty()) continue;
+
                     String command = tokens.get(0);
                     List<String> argTokens = tokens.subList(1, tokens.size());
 
-                    registry.execute(command, argTokens, result.redirect());
+                    registry.execute(command, argTokens, result.redirect(), background);
                 } catch (UnterminatedQuoteException e) {
                     System.err.println(e.getMessage());
                 } catch (UserInterruptException e) {

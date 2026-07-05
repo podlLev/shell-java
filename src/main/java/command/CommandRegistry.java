@@ -12,7 +12,6 @@ public class CommandRegistry {
     private final ExternalCommand externalCommand;
 
     public CommandRegistry(Environment env) {
-
         Map<String, Builtin> map = new HashMap<>();
         for (BuiltinFactory f : BuiltinFactory.values()) {
             register(map, f.create(env));
@@ -34,11 +33,11 @@ public class CommandRegistry {
         return builtins.containsKey(name);
     }
 
-    public void execute(String command, List<String> arguments, Redirect redirect) {
+    public void execute(String command, List<String> arguments, Redirect redirect, boolean background) {
         if (isBuiltin(command)) {
             builtins.get(command).execute(command, arguments, redirect);
         } else {
-            externalCommand.execute(command, arguments, redirect);
+            externalCommand.execute(command, arguments, redirect, background);
         }
     }
 

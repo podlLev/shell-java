@@ -1,5 +1,6 @@
 package command;
 
+import jobs.Job;
 import lombok.RequiredArgsConstructor;
 import redirect.Redirect;
 import util.Environment;
@@ -16,6 +17,11 @@ public class ExternalCommand implements Executable {
 
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
+        execute(command, args, redirect, false);
+    }
+
+    @Override
+    public void execute(String command, List<String> args, Redirect redirect, boolean background) {
         String execPath = PathResolver.find(command, env);
         if (execPath == null) {
             System.err.printf("%s: command not found%n", command);
@@ -23,11 +29,19 @@ public class ExternalCommand implements Executable {
         }
 
         try {
-            List<String> parts = buildProcessArgs(command, execPath, args);
-            ProcessBuilder pb = new ProcessBuilder(parts);
+            ProcessBuilder pb = new ProcessBuilder(buildProcessArgs(command, execPath, args));
             pb.directory(env.getCurrentDir());
             configureRedirect(pb, redirect);
-            pb.start().waitFor();
+
+            Process process = pb.start();
+
+            if (background) {
+                String commandLine = command + (args.isEmpty() ? "" : " " + String.join(" ", args));
+                Job job = env.getJobManager().addJob(process, commandLine);
+                System.out.printf("[%d] %d%n", job.getJobNumber(), job.getPid());
+            } else {
+                process.waitFor();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.printf("%s: interrupted%n", command);
