@@ -15,10 +15,6 @@ public class Job {
         return process.pid();
     }
 
-    public boolean isRunning() {
-        return getStatus() == JobStatus.RUNNING;
-    }
-
     public JobStatus getStatus() {
         if (process.isAlive()) return JobStatus.RUNNING;
         return JobStatus.DONE;

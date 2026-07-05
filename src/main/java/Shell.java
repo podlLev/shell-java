@@ -42,6 +42,7 @@ public class Shell {
                     .build();
 
             while (true) {
+                env.getJobManager().reap();
                 try {
                     String input = reader.readLine("$ ").trim();
                     if (input.isEmpty()) continue;
