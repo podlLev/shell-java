@@ -16,7 +16,8 @@ public class Environment {
 
     private final Map<String, String> completions = new HashMap<>();
     private final JobManager jobManager = new JobManager();
-    private final HistoryManager historyManager = new HistoryManager();
+    private final HistoryManager historyManager =
+            new HistoryManager(System.getenv("HISTFILE"));
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));

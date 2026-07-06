@@ -6,9 +6,7 @@ import redirect.Redirect;
 import util.Environment;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,15 +24,16 @@ public final class HistoryBuiltin implements Builtin {
         if (!args.isEmpty()) {
             switch (args.get(0)) {
                 case "-r" -> {
-                    if (args.size() >= 2) handleRead(args.get(1), redirect);
-                    return;
+                    if (args.size() >= 2) {
+                        env.getHistoryManager().load(Path.of(args.get(1)));
+                    }
                 }
                 case "-w" -> {
-                    if (args.size() >= 2) handleWrite(args.get(1), redirect);
+                    if (args.size() >= 2) writeHistory(args.get(1), false, redirect);
                     return;
                 }
                 case "-a" -> {
-                    if (args.size() >= 2) handleAppend(args.get(1), redirect);
+                    if (args.size() >= 2) writeHistory(args.get(1), true, redirect);
                     return;
                 }
             }
@@ -56,33 +55,15 @@ public final class HistoryBuiltin implements Builtin {
         }
     }
 
-    private void handleRead(String path, Redirect redirect) {
+    private void writeHistory(String path, boolean append, Redirect redirect) {
         try {
-            List<String> lines = Files.readAllLines(Path.of(path));
-            for (String line : lines) {
-                if (!line.isBlank()) {
-                    env.getHistoryManager().add(line);
-                }
+            if (append) {
+                env.getHistoryManager().append(Path.of(path));
+            } else {
+                env.getHistoryManager().writeTo(Path.of(path));
             }
         } catch (IOException e) {
-            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
-        }
-    }
-
-    private void handleWrite(String path, Redirect redirect) {
-        try {
-            Files.write(Path.of(path), env.getHistoryManager().getEntries());
-        } catch (IOException e) {
-            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
-        }
-    }
-
-    private void handleAppend(String path, Redirect redirect) {
-        try {
-            Files.write(Path.of(path), env.getHistoryManager().getEntries(),
-                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
+            OutputWriter.writeError("history: " + e.getMessage(), redirect);
         }
     }
 
