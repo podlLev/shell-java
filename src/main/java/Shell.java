@@ -68,16 +68,54 @@ public class Shell {
     }
 
     private void handleInput(String input) {
-        env.getHistoryManager().add(input);
+        String expanded = expandHistory(input);
+        if (expanded == null) return;
+        if (!expanded.equals(input)) {
+            System.out.println(expanded);
+        }
 
-        ParseResult result = tokenizer.tokenize(input);
+        env.getHistoryManager().add(expanded);
+
+        ParseResult result = tokenizer.tokenize(expanded);
         List<String> tokens = result.tokens();
         if (tokens.isEmpty()) return;
 
         String command = tokens.get(0);
         List<String> argTokens = tokens.subList(1, tokens.size());
-
         registry.execute(command, argTokens, result.redirect(), result.background());
+    }
+
+    private String expandHistory(String input) {
+        List<String> entries = env.getHistoryManager().getEntries();
+
+        if (input.equals("!!")) {
+            if (entries.isEmpty()) {
+                System.err.println("!!: event not found");
+                return null;
+            }
+            return entries.get(entries.size() - 1);
+        }
+
+        if (input.startsWith("!")) {
+            String rest = input.substring(1);
+            try {
+                int n = Integer.parseInt(rest);
+                if (n < 1 || n > entries.size()) {
+                    System.err.printf("!%d: event not found%n", n);
+                    return null;
+                }
+                return entries.get(n - 1);
+            } catch (NumberFormatException e) {
+                for (int i = entries.size() - 1; i >= 0; i--) {
+                    if (entries.get(i).startsWith(rest)) {
+                        return entries.get(i);
+                    }
+                }
+                System.err.printf("!%s: event not found%n", rest);
+                return null;
+            }
+        }
+        return input;
     }
 
 }

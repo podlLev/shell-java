@@ -17,7 +17,8 @@ public enum BuiltinFactory {
     LS(LsBuiltin::new),
     COMPLETE(CompleteBuiltin::new),
     JOBS(JobsBuiltin::new),
-    HISTORY(HistoryBuiltin::new);
+    HISTORY(HistoryBuiltin::new),
+    FC(FcBuiltin::new);
 
     private final Function<Environment, Builtin> factory;
 

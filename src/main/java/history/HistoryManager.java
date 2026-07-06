@@ -12,17 +12,48 @@ import java.util.stream.Stream;
 public class HistoryManager {
 
     private static final String DEFAULT_HISTORY_FILE = ".shell_java_history";
+    private static final int DEFAULT_HIST_SIZE = 1000;
 
     private final List<String> entries = new ArrayList<>();
     private final Path historyFile;
+    private final int histSize;
+    private final String histControl;
 
-    public HistoryManager(String histFile) {
+    public HistoryManager(String histFile, String histSize, String histControl) {
         this.historyFile = resolveHistoryFile(histFile);
+        this.histSize = parseHistSize(histSize);
+        this.histControl = histControl != null ? histControl : "";
     }
 
     public void add(String line) {
-        if (entries.isEmpty() || !entries.get(entries.size() - 1).equals(line)) {
-            entries.add(line);
+        if (shouldIgnore(line)) return;
+        if (histControl.contains("erasedups")) {
+            entries.removeIf(e -> e.equals(line));
+        }
+        entries.add(line);
+        trimToSize();
+    }
+
+    private boolean shouldIgnore(String line) {
+        if (histControl.contains("ignorespace") && line.startsWith(" ")) return true;
+        if (histControl.contains("ignoredups") || histControl.contains("ignoreboth")) {
+            if (!entries.isEmpty() && entries.get(entries.size() - 1).equals(line)) return true;
+        }
+        return false;
+    }
+
+    private void trimToSize() {
+        while (entries.size() > histSize) {
+            entries.remove(0);
+        }
+    }
+
+    private static int parseHistSize(String histSize) {
+        if (histSize == null || histSize.isBlank()) return DEFAULT_HIST_SIZE;
+        try {
+            return Integer.parseInt(histSize);
+        } catch (NumberFormatException e) {
+            return DEFAULT_HIST_SIZE;
         }
     }
 
