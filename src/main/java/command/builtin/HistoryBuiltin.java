@@ -36,6 +36,10 @@ public final class HistoryBuiltin implements Builtin {
                     if (args.size() >= 2) writeHistory(args.get(1), true, redirect);
                     return;
                 }
+                case "-c" -> {
+                    env.getHistoryManager().clear();
+                    return;
+                }
             }
         }
 

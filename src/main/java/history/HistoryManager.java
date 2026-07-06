@@ -37,7 +37,7 @@ public class HistoryManager {
     private boolean shouldIgnore(String line) {
         if (histControl.contains("ignorespace") && line.startsWith(" ")) return true;
         if (histControl.contains("ignoredups") || histControl.contains("ignoreboth")) {
-            if (!entries.isEmpty() && entries.get(entries.size() - 1).equals(line)) return true;
+            return !entries.isEmpty() && entries.get(entries.size() - 1).equals(line);
         }
         return false;
     }
@@ -96,6 +96,10 @@ public class HistoryManager {
             return Path.of(histFile);
         }
         return Path.of(System.getProperty("user.home"), DEFAULT_HISTORY_FILE);
+    }
+
+    public void clear() {
+        entries.clear();
     }
 
 }
