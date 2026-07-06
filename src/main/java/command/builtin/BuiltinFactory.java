@@ -11,6 +11,7 @@ public enum BuiltinFactory {
     RMDIR(RmdirBuiltin.INSTANCE),
     TOUCH(TouchBuiltin.INSTANCE),
     CAT(CatBuiltin.INSTANCE),
+    HISTORY(HistoryBuiltin.INSTANCE),
 
     PWD(PwdBuiltin::new),
     CD(CdBuiltin::new),
