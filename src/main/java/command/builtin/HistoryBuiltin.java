@@ -8,6 +8,7 @@ import util.Environment;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,6 +31,10 @@ public final class HistoryBuiltin implements Builtin {
                 }
                 case "-w" -> {
                     if (args.size() >= 2) handleWrite(args.get(1), redirect);
+                    return;
+                }
+                case "-a" -> {
+                    if (args.size() >= 2) handleAppend(args.get(1), redirect);
                     return;
                 }
             }
@@ -67,6 +72,15 @@ public final class HistoryBuiltin implements Builtin {
     private void handleWrite(String path, Redirect redirect) {
         try {
             Files.write(Path.of(path), env.getHistoryManager().getEntries());
+        } catch (IOException e) {
+            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
+        }
+    }
+
+    private void handleAppend(String path, Redirect redirect) {
+        try {
+            Files.write(Path.of(path), env.getHistoryManager().getEntries(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
             OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
         }
