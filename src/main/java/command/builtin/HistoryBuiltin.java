@@ -22,6 +22,11 @@ public final class HistoryBuiltin implements Builtin {
 
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
+        if (!args.isEmpty() && args.get(0).equals("-r")) {
+            if (args.size() >= 2) handleRead(args.get(1), redirect);
+            return;
+        }
+
         List<String> entries = env.getHistoryManager().getEntries();
         int start = 0;
         if (!args.isEmpty()) {
@@ -35,6 +40,19 @@ public final class HistoryBuiltin implements Builtin {
         }
         for (int i = start; i < entries.size(); i++) {
             OutputWriter.write(String.format("%5d  %s", i + 1, entries.get(i)), redirect);
+        }
+    }
+
+    private void handleRead(String path, Redirect redirect) {
+        try {
+            List<String> lines = Files.readAllLines(Path.of(path));
+            for (String line : lines) {
+                if (!line.isBlank()) {
+                    env.getHistoryManager().add(line);
+                }
+            }
+        } catch (IOException e) {
+            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
         }
     }
 
