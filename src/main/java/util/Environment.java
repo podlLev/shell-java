@@ -1,5 +1,6 @@
 package util;
 
+import history.HistoryManager;
 import jobs.JobManager;
 import lombok.Getter;
 
@@ -15,6 +16,11 @@ public class Environment {
 
     private final Map<String, String> completions = new HashMap<>();
     private final JobManager jobManager = new JobManager();
+    private final HistoryManager historyManager = new HistoryManager(
+            System.getenv("HISTFILE"),
+            System.getenv("HISTSIZE"),
+            System.getenv("HISTCONTROL")
+    );
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));
@@ -51,6 +57,18 @@ public class Environment {
 
     public void removeCompletion(String command) {
         completions.remove(command);
+    }
+
+    public String getHistFile() {
+        return System.getenv("HISTFILE");
+    }
+
+    public String getHistSize() {
+        return System.getenv("HISTSIZE");
+    }
+
+    public String getHistControl() {
+        return System.getenv("HISTCONTROL");
     }
 
 }

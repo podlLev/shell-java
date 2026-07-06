@@ -95,6 +95,9 @@ public class Tokenizer {
     }
 
     private ParseResult extractRedirect(List<String> tokens) {
+        boolean background = !tokens.isEmpty() && tokens.get(tokens.size() - 1).equals("&");
+        if (background) tokens.remove(tokens.size() - 1);
+
         for (int i = 0; i < tokens.size(); i++) {
             String token = tokens.get(i);
 
@@ -110,14 +113,14 @@ public class Tokenizer {
                 int fileIndex = i + 1;
                 if (fileIndex >= tokens.size()) {
                     System.err.println("syntax error: expected filename after redirect");
-                    return new ParseResult(tokens, null);
+                    return new ParseResult(tokens, null, background);
                 }
                 List<String> args = new ArrayList<>(tokens.subList(0, i));
                 args.addAll(tokens.subList(fileIndex + 1, tokens.size()));
-                return new ParseResult(args, new Redirect(type, tokens.get(fileIndex)));
+                return new ParseResult(args, new Redirect(type, tokens.get(fileIndex)), background);
             }
         }
-        return new ParseResult(tokens, null);
+        return new ParseResult(tokens, null, background);
     }
 
 }

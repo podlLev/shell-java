@@ -4,4 +4,4 @@ import redirect.Redirect;
 
 import java.util.List;
 
-public record ParseResult(List<String> tokens, Redirect redirect) {}
+public record ParseResult(List<String> tokens, Redirect redirect, boolean background) {}

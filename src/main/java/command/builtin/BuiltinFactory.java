@@ -11,12 +11,15 @@ public enum BuiltinFactory {
     RMDIR(RmdirBuiltin.INSTANCE),
     TOUCH(TouchBuiltin.INSTANCE),
     CAT(CatBuiltin.INSTANCE),
+    CLEAR(ClearBuiltin.INSTANCE),
 
     PWD(PwdBuiltin::new),
     CD(CdBuiltin::new),
     LS(LsBuiltin::new),
     COMPLETE(CompleteBuiltin::new),
-    JOBS(JobsBuiltin::new);
+    JOBS(JobsBuiltin::new),
+    HISTORY(HistoryBuiltin::new),
+    FC(FcBuiltin::new);
 
     private final Function<Environment, Builtin> factory;
 
