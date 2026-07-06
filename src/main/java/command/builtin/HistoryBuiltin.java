@@ -22,9 +22,17 @@ public final class HistoryBuiltin implements Builtin {
 
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
-        if (!args.isEmpty() && args.get(0).equals("-r")) {
-            if (args.size() >= 2) handleRead(args.get(1), redirect);
-            return;
+        if (!args.isEmpty()) {
+            switch (args.get(0)) {
+                case "-r" -> {
+                    if (args.size() >= 2) handleRead(args.get(1), redirect);
+                    return;
+                }
+                case "-w" -> {
+                    if (args.size() >= 2) handleWrite(args.get(1), redirect);
+                    return;
+                }
+            }
         }
 
         List<String> entries = env.getHistoryManager().getEntries();
@@ -51,6 +59,14 @@ public final class HistoryBuiltin implements Builtin {
                     env.getHistoryManager().add(line);
                 }
             }
+        } catch (IOException e) {
+            OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
+        }
+    }
+
+    private void handleWrite(String path, Redirect redirect) {
+        try {
+            Files.write(Path.of(path), env.getHistoryManager().getEntries());
         } catch (IOException e) {
             OutputWriter.writeError("history: " + path + ": " + e.getMessage(), redirect);
         }
