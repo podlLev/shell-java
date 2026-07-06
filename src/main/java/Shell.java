@@ -47,6 +47,8 @@ public class Shell {
                     String input = reader.readLine("$ ").trim();
                     if (input.isEmpty()) continue;
 
+                    env.getHistoryManager().add(input);
+
                     ParseResult result = tokenizer.tokenize(input);
                     List<String> tokens = result.tokens();
                     if (tokens.isEmpty()) continue;

@@ -1,5 +1,6 @@
 package util;
 
+import history.HistoryManager;
 import jobs.JobManager;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ public class Environment {
 
     private final Map<String, String> completions = new HashMap<>();
     private final JobManager jobManager = new JobManager();
+    private final HistoryManager historyManager = new HistoryManager();
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));
