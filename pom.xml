@@ -6,9 +6,9 @@
 
     <groupId>com.github.podllev</groupId>
     <artifactId>shell-java</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <name>shell-java</name>
-    <description>A custom POSIX-style shell in Java featuring builtins, I/O redirection, tab completion, job control, and command history</description>
+    <description>A custom POSIX-style shell in Java featuring builtins, I/O redirection, tab completion, job control, command history, pipes, and variable expansion</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

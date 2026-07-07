@@ -5,9 +5,8 @@ import lombok.RequiredArgsConstructor;
 import redirect.Redirect;
 import util.Environment;
 import util.PathResolver;
+import util.ProcessBuilderFactory;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,18 +27,20 @@ public class ExternalCommand implements Executable {
         }
 
         try {
-            ProcessBuilder pb = new ProcessBuilder(buildProcessArgs(command, execPath, args));
+            ProcessBuilder pb = ProcessBuilderFactory.build(command, execPath, args, env);
             pb.directory(env.getCurrentDir());
-            configureRedirect(pb, redirect);
+            ProcessBuilderFactory.configureRedirect(pb, redirect);
 
             Process process = pb.start();
 
             if (background) {
                 String commandLine = command + (args.isEmpty() ? "" : " " + String.join(" ", args));
                 Job job = env.getJobManager().addJob(process, commandLine);
+                env.setLastBackgroundPid(job.getPid());
                 System.out.printf("[%d] %d%n", job.getJobNumber(), job.getPid());
             } else {
-                process.waitFor();
+                int exitCode = process.waitFor();
+                env.setLastExitCode(exitCode);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -47,46 +48,6 @@ public class ExternalCommand implements Executable {
         } catch (Exception e) {
             System.err.printf("%s: %s%n", command, e.getMessage());
         }
-    }
-
-    private void configureRedirect(ProcessBuilder pb, Redirect redirect) {
-        if (redirect == null) {
-            pb.inheritIO();
-            return;
-        }
-        switch (redirect.type()) {
-            case STDOUT -> {
-                pb.redirectOutput(new File(redirect.filePath()));
-                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-            }
-            case STDOUT_APPEND -> {
-                pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
-                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
-            }
-            case STDERR -> {
-                pb.redirectError(new File(redirect.filePath()));
-                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            }
-            case STDERR_APPEND -> {
-                pb.redirectError(ProcessBuilder.Redirect.appendTo(new File(redirect.filePath())));
-                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-            }
-            default -> pb.inheritIO();
-        }
-        pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
-    }
-
-    private List<String> buildProcessArgs(String command, String execPath, List<String> args) {
-        List<String> parts = new ArrayList<>();
-        if (env.isWindows()) {
-            parts.add("cmd.exe");
-            parts.add("/c");
-            parts.add(command);
-        } else {
-            parts.add(execPath);
-        }
-        parts.addAll(args);
-        return parts;
     }
 
 }

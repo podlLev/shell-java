@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import redirect.OutputWriter;
 import redirect.Redirect;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -22,7 +24,14 @@ public final class CatBuiltin implements Builtin {
     @Override
     public void execute(String command, List<String> args, Redirect redirect) {
         if (args.isEmpty()) {
-            System.err.println("cat: missing operand");
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    OutputWriter.write(line, redirect);
+                }
+            } catch (IOException e) {
+                OutputWriter.writeError("cat: " + e.getMessage(), redirect);
+            }
             return;
         }
 

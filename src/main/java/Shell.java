@@ -4,6 +4,8 @@ import org.jline.reader.*;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import pipe.Pipeline;
+import pipe.PipelineResult;
 import util.*;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ public class Shell {
     public Shell() {
         this.env = new Environment();
         this.registry = new CommandRegistry(env);
-        this.tokenizer = new Tokenizer();
+        this.tokenizer = new Tokenizer(env);
         env.getHistoryManager().load();
     }
 
@@ -68,21 +70,20 @@ public class Shell {
     }
 
     private void handleInput(String input) {
+        if (input.matches("[A-Za-z_][A-Za-z0-9_]*=.*")) {
+            int eq = input.indexOf('=');
+            env.setVariable(input.substring(0, eq), input.substring(eq + 1));
+            return;
+        }
+
         String expanded = expandHistory(input);
         if (expanded == null) return;
-        if (!expanded.equals(input)) {
-            System.out.println(expanded);
-        }
+        if (!expanded.equals(input)) System.out.println(expanded);
 
         env.getHistoryManager().add(expanded);
 
-        ParseResult result = tokenizer.tokenize(expanded);
-        List<String> tokens = result.tokens();
-        if (tokens.isEmpty()) return;
-
-        String command = tokens.get(0);
-        List<String> argTokens = tokens.subList(1, tokens.size());
-        registry.execute(command, argTokens, result.redirect(), result.background());
+        PipelineResult pipeline = tokenizer.tokenize(expanded);
+        new Pipeline(registry, env).execute(pipeline);
     }
 
     private String expandHistory(String input) {

@@ -3,8 +3,10 @@ package util;
 import history.HistoryManager;
 import jobs.JobManager;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +23,13 @@ public class Environment {
             System.getenv("HISTSIZE"),
             System.getenv("HISTCONTROL")
     );
+    private final Map<String, String> variables = new HashMap<>();
+
+    @Getter @Setter
+    private int lastExitCode = 0;
+
+    @Getter @Setter
+    private long lastBackgroundPid = 0;
 
     public Environment() {
         this.currentDir = new File(System.getProperty("user.dir"));
@@ -69,6 +78,25 @@ public class Environment {
 
     public String getHistControl() {
         return System.getenv("HISTCONTROL");
+    }
+
+    public void setVariable(String name, String value) {
+        variables.put(name, value);
+    }
+
+    public Optional<String> getVariable(String name) {
+        if (variables.containsKey(name)) {
+            return Optional.of(variables.get(name));
+        }
+        return Optional.ofNullable(System.getenv(name));
+    }
+
+    public void unsetVariable(String name) {
+        variables.remove(name);
+    }
+
+    public Map<String, String> getVariables() {
+        return Collections.unmodifiableMap(variables);
     }
 
 }

@@ -19,7 +19,10 @@ public enum BuiltinFactory {
     COMPLETE(CompleteBuiltin::new),
     JOBS(JobsBuiltin::new),
     HISTORY(HistoryBuiltin::new),
-    FC(FcBuiltin::new);
+    FC(FcBuiltin::new),
+    DECLARE(DeclareBuiltin::new),
+    EXPORT(ExportBuiltin::new),
+    UNSET(UnsetBuiltin::new);
 
     private final Function<Environment, Builtin> factory;
 
