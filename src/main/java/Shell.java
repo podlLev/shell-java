@@ -20,7 +20,7 @@ public class Shell {
     public Shell() {
         this.env = new Environment();
         this.registry = new CommandRegistry(env);
-        this.tokenizer = new Tokenizer();
+        this.tokenizer = new Tokenizer(env);
         env.getHistoryManager().load();
     }
 
@@ -70,6 +70,12 @@ public class Shell {
     }
 
     private void handleInput(String input) {
+        if (input.matches("[A-Za-z_][A-Za-z0-9_]*=.*")) {
+            int eq = input.indexOf('=');
+            env.setVariable(input.substring(0, eq), input.substring(eq + 1));
+            return;
+        }
+
         String expanded = expandHistory(input);
         if (expanded == null) return;
         if (!expanded.equals(input)) System.out.println(expanded);
