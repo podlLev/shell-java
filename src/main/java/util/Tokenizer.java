@@ -1,5 +1,6 @@
 package util;
 
+import lombok.RequiredArgsConstructor;
 import pipe.PipelineResult;
 import redirect.Redirect;
 import redirect.RedirectType;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class Tokenizer {
 
     private static final char WHITESPACE = ' ';
@@ -17,6 +19,8 @@ public class Tokenizer {
     private static final char BACKSLASH = '\\';
     private static final char DOLLAR = '$';
     private static final char BACKTICK = '`';
+
+    private final Environment env;
 
     public PipelineResult tokenize(String input) {
         List<String> stages = splitByPipe(input);
@@ -59,6 +63,7 @@ public class Tokenizer {
     }
 
     private ParseResult tokenizeStage(String input) {
+        input = expandVariables(input);
         List<String> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean quoted = false;
@@ -83,6 +88,70 @@ public class Tokenizer {
         }
         if (!current.isEmpty() || quoted) tokens.add(current.toString());
         return extractRedirect(tokens);
+    }
+
+    private String expandVariables(String input) {
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+
+        while (i < input.length()) {
+            char c = input.charAt(i);
+
+            if (c == SINGLE) {
+                result.append(c);
+                i++;
+                while (i < input.length() && input.charAt(i) != SINGLE) {
+                    result.append(input.charAt(i++));
+                }
+                if (i < input.length()) result.append(input.charAt(i++));
+                continue;
+            }
+
+            if (c == '$' && i + 1 < input.length()) {
+                i++;
+                char next = input.charAt(i);
+
+                if (next == '{') {
+                    int end = input.indexOf('}', i + 1);
+                    if (end != -1) {
+                        String name = input.substring(i + 1, end);
+                        result.append(resolveVariable(name));
+                        i = end + 1;
+                        continue;
+                    }
+                } else if (next == '?') {
+                    result.append(env.getLastExitCode());
+                    i++;
+                    continue;
+                } else if (next == '$') {
+                    result.append(ProcessHandle.current().pid());
+                    i++;
+                    continue;
+                } else if (next == '!') {
+                    result.append(env.getLastBackgroundPid());
+                    i++;
+                    continue;
+                } else if (Character.isLetterOrDigit(next) || next == '_') {
+                    int start = i;
+                    while (i < input.length() &&
+                            (Character.isLetterOrDigit(input.charAt(i)) || input.charAt(i) == '_')) {
+                        i++;
+                    }
+                    String name = input.substring(start, i);
+                    result.append(resolveVariable(name));
+                    continue;
+                }
+                result.append('$');
+                continue;
+            }
+            result.append(c);
+            i++;
+        }
+        return result.toString();
+    }
+
+    private String resolveVariable(String name) {
+        return env.getVariable(name).orElse("");
     }
 
     private int parseSingleQuote(String input, int i, StringBuilder current) {
