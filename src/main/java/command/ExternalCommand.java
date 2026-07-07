@@ -36,9 +36,11 @@ public class ExternalCommand implements Executable {
             if (background) {
                 String commandLine = command + (args.isEmpty() ? "" : " " + String.join(" ", args));
                 Job job = env.getJobManager().addJob(process, commandLine);
+                env.setLastBackgroundPid(job.getPid());
                 System.out.printf("[%d] %d%n", job.getJobNumber(), job.getPid());
             } else {
-                process.waitFor();
+                int exitCode = process.waitFor();
+                env.setLastExitCode(exitCode);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
