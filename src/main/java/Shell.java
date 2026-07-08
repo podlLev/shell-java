@@ -76,11 +76,13 @@ public class Shell {
             return;
         }
 
-        String expanded = expandHistory(input);
-        if (expanded == null) return;
-        if (!expanded.equals(input)) System.out.println(expanded);
+        String aliasExpanded = env.getAliasManager().expand(input);
 
-        env.getHistoryManager().add(expanded);
+        String expanded = expandHistory(aliasExpanded);
+        if (expanded == null) return;
+        if (!expanded.equals(aliasExpanded)) System.out.println(expanded);
+
+        env.getHistoryManager().add(input);
 
         PipelineResult pipeline = tokenizer.tokenize(expanded);
         new Pipeline(registry, env).execute(pipeline);
