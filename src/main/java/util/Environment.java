@@ -1,5 +1,6 @@
 package util;
 
+import alias.AliasManager;
 import history.HistoryManager;
 import jobs.JobManager;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Environment {
             System.getenv("HISTSIZE"),
             System.getenv("HISTCONTROL")
     );
+    private final AliasManager aliasManager = new AliasManager();
     private final Map<String, String> variables = new HashMap<>();
 
     @Getter @Setter
@@ -97,6 +99,10 @@ public class Environment {
 
     public Map<String, String> getVariables() {
         return Collections.unmodifiableMap(variables);
+    }
+
+    public AliasManager getAliasManager() {
+        return aliasManager;
     }
 
 }
