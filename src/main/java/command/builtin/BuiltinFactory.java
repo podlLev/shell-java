@@ -22,7 +22,9 @@ public enum BuiltinFactory {
     FC(FcBuiltin::new),
     DECLARE(DeclareBuiltin::new),
     EXPORT(ExportBuiltin::new),
-    UNSET(UnsetBuiltin::new);
+    UNSET(UnsetBuiltin::new),
+    ALIAS(AliasBuiltin::new),
+    UNALIAS(UnaliasBuiltin::new);
 
     private final Function<Environment, Builtin> factory;
 

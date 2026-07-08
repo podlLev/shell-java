@@ -101,8 +101,4 @@ public class Environment {
         return Collections.unmodifiableMap(variables);
     }
 
-    public AliasManager getAliasManager() {
-        return aliasManager;
-    }
-
 }
