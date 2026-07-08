@@ -21,6 +21,7 @@ import java.util.Optional;
 public final class CandidateCollector {
 
     private final Completer builtinCompleter;
+    private final Completer aliasCompleter;
     private final Completer binaryCompleter;
     private final Completer filesCompleter;
     private final Completer directoriesCompleter;
@@ -29,6 +30,7 @@ public final class CandidateCollector {
     public static CandidateCollector of(CommandRegistry registry, Environment env) {
         return new CandidateCollector(
                 new StringsCompleter(registry.getBuiltinNames()),
+                new StringsCompleter(env.getAliasManager().getAll().keySet()),
                 new SystemBinaryCompleter(env),
                 new Completers.FilesCompleter(env.getCurrentDir()),
                 new Completers.DirectoriesCompleter(env.getCurrentDir()),
@@ -40,6 +42,7 @@ public final class CandidateCollector {
         List<Candidate> candidates = new ArrayList<>();
         if (pl.wordIndex() == 0) {
             builtinCompleter.complete(reader, pl, candidates);
+            aliasCompleter.complete(reader, pl, candidates);
             binaryCompleter.complete(reader, pl, candidates);
         } else {
             String command = pl.words().get(0);
