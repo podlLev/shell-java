@@ -1,11 +1,28 @@
-# shell-java
+<h1 align="center">shell-java</h1>
+ 
+<p align="center"><strong>A custom POSIX-style shell implementation in Java, built from scratch.</strong></p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-17+-orange?logo=openjdk&logoColor=white" alt="Java 17+">
+  <img src="https://img.shields.io/badge/Maven-3.6+-blue?logo=apachemaven&logoColor=white" alt="Maven 3.6+">
+  <img src="https://img.shields.io/badge/Version-1.0.0-green" alt="Version 1.0.0">
+  <img src="https://img.shields.io/badge/License-MIT-blue" alt="License: MIT">
+  <img src="https://img.shields.io/badge/Tests-passing-brightgreen" alt="Tests passing">
+</p>
+<p align="center">
+  Builtins · I/O redirection · pipelines · job control · history · variable expansion · aliases · tab completion
+</p>
+<p align="center">
+  <a href="#features">Features</a> ·
+  <a href="#requirements">Requirements</a> ·
+  <a href="#building">Building</a> ·
+  <a href="#usage-examples">Usage</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#testing">Testing</a> ·
+  <a href="#releases">Releases</a> ·
+  <a href="#license">License</a>
+</p>
 
-![Java](https://img.shields.io/badge/Java-17+-orange?logo=openjdk)
-![Maven](https://img.shields.io/badge/Maven-3.6+-blue?logo=apachemaven)
-![Version](https://img.shields.io/badge/version-1.0.0-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
-
-> A custom POSIX-style shell implementation in Java, built from scratch.
+---
 
 A custom POSIX-style shell implementation in Java, built from scratch with support for
 builtin commands, I/O redirection, pipelines, tab completion, job control, command history,
